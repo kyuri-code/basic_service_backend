@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: demo
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/sample}
+    username: ${DB_USERNAME:admin}
+    password: ${DB_PASSWORD:Password!23}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  devtools:
+    livereload:
+      enabled: true
+
+mybatis:
+  # MyBatisが使用するマッパーXMLファイルの位置を指定。
+  mapper-locations: classpath:mapper/**/*.xml
+  # MyBatisで使用するエンティティクラスに対してエイリアスを設定するパッケージを指定。
+  type-aliases-package: com.study.basic.service.demo.model
+

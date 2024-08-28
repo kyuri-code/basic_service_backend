@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.study.basic.service.demo.mapper.TaskMapper">
+
+    <resultMap id="TaskResultMap" type="com.study.basic.service.demo.model.Task">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="description" property="description"/>
+        <result column="completed" property="completed"/>
+        <!-- Commentを含める -->
+        <collection property="comments" ofType="com.study.basic.service.demo.model.Comment">
+            <id column="comment_id" property="id" />
+            <result column="content" property="content" />
+            <result column="created_at" property="createdAt" />
+        </collection>
+    </resultMap>
+
+    <select id="findAll" resultMap="TaskResultMap">
+        SELECT * FROM task t LEFT OUTER JOIN comment c ON t.id = c.task_id
+    </select>
+
+    <select id="findById" parameterType="Long" resultMap="TaskResultMap">
+        SELECT * FROM task WHERE id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.study.basic.service.demo.model.Task" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO task (title, description, completed) VALUES (#{title}, #{description}, #{completed})
+    </insert>
+
+    <update id="update" parameterType="com.study.basic.service.demo.model.Task">
+        UPDATE task SET title=#{title}, description=#{description}, completed=#{completed} WHERE id=#{id}
+    </update>
+
+    <delete id="deleteCommentsByTaskId" parameterType="Long">
+        DELETE FROM comment WHERE task_id = #{id}
+    </delete>
+
+    <delete id="delete" parameterType="Long">
+        DELETE FROM task WHERE id=#{id}
+    </delete>
+
+    <!-- Commentの挿入 -->
+    <insert id="insertComment" parameterType="com.study.basic.service.demo.model.Comment" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO comment (content, task_id, created_at) VALUES (#{content}, #{task.id}, #{createdAt})
+    </insert>
+
+    <!-- 特定のタスクに関連付けられたCommentを取得 -->
+    <select id="findCommentsByTaskId" parameterType="Long" resultType="com.study.basic.service.demo.model.Comment">
+        SELECT id, content, created_at FROM comment WHERE task_id = #{taskId}
+    </select>
+
+</mapper>
