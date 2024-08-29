@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.study.basic.service.demo.model.Comment;
 import com.study.basic.service.demo.model.Task;
 import com.study.basic.service.demo.service.TaskService;
+import com.study.basic.service.demo.exception.ResourceNotFoundException;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -37,9 +39,7 @@ public class TaskController {
     @GetMapping("/{id}/comments")
     public ResponseEntity<List<Comment>> getCommentsByTaskId(@PathVariable Long id) {
         Task task = taskService.getTaskById(id);
-        if (task == null) {
-            return ResponseEntity.notFound().build();
-        }
+        if (task == null) throw new ResourceNotFoundException("Task not found with id: " + id);
 
         List<Comment> comments = taskService.getCommentsByTaskId(id);
         return ResponseEntity.ok(comments);
@@ -54,9 +54,7 @@ public class TaskController {
     @PostMapping("/{id}/comments/add")
     public ResponseEntity<Comment> addCommentToTask(@PathVariable Long id, @RequestBody Comment comment) {
         Task task = taskService.getTaskById(id);
-        if (task == null) {
-            return ResponseEntity.notFound().build();
-        }
+        if (task == null) throw new ResourceNotFoundException("Task not found with id: " + id);
 
         comment.setTask(task);
         taskService.addComment(comment);
@@ -66,9 +64,7 @@ public class TaskController {
     @PostMapping("/update/{id}")
     public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task taskDetails){
         Task task = taskService.getTaskById(id);
-        if (task == null) {
-            return ResponseEntity.notFound().build();
-        }
+        if (task == null) throw new ResourceNotFoundException("Task not found with id: " + id);
 
         task.setTitle(taskDetails.getTitle());
         task.setDescription(taskDetails.getDescription());
@@ -81,9 +77,7 @@ public class TaskController {
     @PostMapping("/delete/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         Task task = taskService.getTaskById(id);
-        if (task == null) {
-            return ResponseEntity.notFound().build();
-        }
+        if (task == null) throw new ResourceNotFoundException("Task not found with id: " + id);
 
         taskService.deleteTask(id);
         return ResponseEntity.noContent().build();
