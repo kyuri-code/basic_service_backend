@@ -1,0 +1,58 @@
+name: Deploy to EC2
+
+# Workflowが起動するタイミング指定する
+# mainブランチにpushされたタイミングで起動する
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # ubuntuのOS下でデプロイを実行する
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 公式アクションを使用して、リポジトリのコードをクローンする。Githubリポジトリの最新のコードがワークフロー内で使用可能になる
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    # 秘密鍵をメモリにロード
+    - name: Set up SSH key
+      uses: webfactory/ssh-agent@v0.5.4
+      with:
+        ssh-private-key: ${{ secrets.EC2_KEY }}
+    
+    # 接続先ホストをknown_hostsに登録
+    - name: Add host to known_hosts
+      run: ssh-keyscan ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+    
+    # Javaのバージョンを指定
+    - name: Set up JDK 21
+      uses: actions/setup-java@v3
+      with:
+        java-version: '21'
+    
+    # 環境変数の設定
+    - name: Restart Spring Boot App
+      env:
+        DB_URL: ${{ secrets.DB_URL }}
+        DB_USERNAME: ${{ secrets.DB_USERNAME }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
+    # Buildの実行
+    - name: Build with Gradle
+      run: ./gradlew clean build
+
+    # JarファイルをEC2にコピー
+    - name: Copy JAR to EC2
+      run: |
+        scp \
+        build/libs/demo-0.0.1-SNAPSHOT.jar \
+        ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/app/demo-0.0.1-SNAPSHOT.jar
+
+    - name: Restart Spring Boot App
+      run: |
+        ssh ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+          sudo systemctl restart myapi.service
+        EOF
