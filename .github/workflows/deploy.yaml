@@ -33,15 +33,12 @@ jobs:
       with:
         java-version: '21'
     
-    # 環境変数の設定
-    - name: Restart Spring Boot App
-      env:
-        DB_URL: ${{ secrets.DB_URL }}
-        DB_USERNAME: ${{ secrets.DB_USERNAME }}
-        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-
     # Buildの実行
     - name: Build with Gradle
+      env:
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       run: ./gradlew clean build
 
     # JarファイルをEC2にコピー
