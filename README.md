@@ -18,7 +18,8 @@ Windowsで実施する場合は、WSL2のセットアップを完了するよう
 プロジェクト用の端末を使用している場合は、使用しないようにしてください。
 WSL2のセットアップはOS自体の設定を変更してしまうので、推奨しないです。
 下記リンクが参考になると思います。Windows11ですが、10でも参考になるかと思います。
-[参考](https://note.com/hiro20180901/n/nc798a07485e2)
+
+[WSL2の設定方法](https://note.com/hiro20180901/n/nc798a07485e2)
 
 ## 機能
 
@@ -86,15 +87,15 @@ DBはpostgreSQLを使用する
 ```
 
 2. **リポジトリのクローン**:
-   ```bash
-   git clone https://github.com/kyuri-code/basic_service_backend.git
-   cd springboot-todo-app
-   ```
+```bash
+    git clone https://github.com/kyuri-code/basic_service_backend.git
+    cd basic_service_backend
+```
 
 3. **依存関係のインストール**: Gradleを使用して依存関係をインストールします。
-   ```bash
-   ./gradlew clean build
-   ```
+```bash
+    ./gradlew clean build
+```
 
 4. **DBの接続情報の設定**:接続先情報は環境変数から読み取るため、exportコマンドで事前に設定しておく。
 ```yaml
@@ -110,8 +111,7 @@ datasource:
     driver-class-name: org.postgresql.Driver
 ```
 
-5. **起動方法**
-VSCodeでAPIサーバの起動を確認
+5. **起動方法** : VSCodeでAPIサーバの起動を確認
 
 ## バックグラウンドでAPIサーバを起動
 毎度手動でAPIサーバを起動するのは面倒なので、自動で起動するような設定を行う。
