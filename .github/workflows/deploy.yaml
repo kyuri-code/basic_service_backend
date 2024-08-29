@@ -24,8 +24,8 @@ jobs:
         ssh-private-key: ${{ secrets.EC2_KEY }}
     
     # 接続先ホストをknown_hostsに登録
-    - name: Add host to known_hosts
-      run: ssh-keyscan ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+    # - name: Add host to known_hosts
+    #   run: ssh-keyscan ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
     
     # Javaのバージョンを指定
     - name: Set up JDK 21
