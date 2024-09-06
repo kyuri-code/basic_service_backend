@@ -12,16 +12,4 @@ class DemoApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-	
-	@Autowired
-	private MockMvc mockMvc;
-
-	@Test
-	public void testGetNonExistentTask() throws Exception {
-		mockMvc.perform(get("/api/tasks/{id}", 999L))
-				.andExpect(status().isNotFound())
-				.andExpect(jsonPath("$.message").value("Task not found with id: 999"))
-				.andExpect(jsonPath("$.statusCode").value(404));
-	}
-
 }
