@@ -13,6 +13,8 @@ spring:
   devtools:
     livereload:
       enabled: true
+logging:
+  config: classpath:log4j2.xml
 
 mybatis:
   # MyBatisが使用するマッパーXMLファイルの位置を指定。

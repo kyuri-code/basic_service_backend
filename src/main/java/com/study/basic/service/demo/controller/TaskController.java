@@ -1,5 +1,7 @@
 package com.study.basic.service.demo.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,8 @@ import com.study.basic.service.demo.exception.ResourceNotFoundException;
 @RequestMapping("/api/tasks")
 public class TaskController {
 
+    private static final Logger logger = LoggerFactory.getLogger(TaskController.class);
+
     private final TaskService taskService;
 
     public TaskController(TaskService taskService) {
@@ -27,6 +31,7 @@ public class TaskController {
 
     @GetMapping("/healthcheck")
     public String healthCheck() {
+        logger.info("Received a healthcheck request");
         return "HelloWorld!!";
     }
 
