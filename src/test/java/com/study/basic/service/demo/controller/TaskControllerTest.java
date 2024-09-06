@@ -1,5 +1,11 @@
 package com.study.basic.service.demo.controller;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.FileAppender;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import com.study.basic.service.demo.exception.GlobalExceptionHandler;
 import com.study.basic.service.demo.exception.ResourceNotFoundException;
 import com.study.basic.service.demo.model.ErrorResponse;
@@ -25,6 +31,27 @@ public class TaskControllerTest {
     @MockBean
     private TaskService taskService;
 
+    @Test
+    public void testHealthCheckLogging() throws Exception {
+        // Arrange
+        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        Configuration config = ctx.getConfiguration();
+        LoggerConfig loggerConfig = config.getLoggerConfig(LogManager.ROOT_LOGGER_NAME);
+        Level originalLevel = loggerConfig.getLevel();
+        loggerConfig.setLevel(Level.DEBUG);
+        ctx.updateLoggers();
+
+        // Act
+        mockMvc.perform(get("/api/tasks/healthcheck"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("HelloWorld!!"));
+
+        // Assert
+        assertThat(((FileAppender) loggerConfig.getAppenders().get("RollingFile")).getFileName())
+                .contains("/var/log/myapi/myapi-log-");
+        loggerConfig.setLevel(originalLevel);
+        ctx.updateLoggers();
+    }
     @Test
     public void testGetTaskByIdNotFound() throws Exception {
         long invalidTaskId = 999L;
